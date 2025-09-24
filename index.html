@@ -7,15 +7,18 @@
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
-    body {
-      background-color: #fd9d0d; /* blue background */
-    }
+body {
+ 
+  background: linear-gradient(135deg, #fd9d0d, #ffcc00, #fd0d0d);
+  min-height: 100vh;
+}
+
     h1 {
       color: #ffffff;
       font-weight: bold;
     }
     .card {
-      border: 2px solid #000; /* black outline only for card */
+      border: 2px solid #000;
       background-color: #ffffff;
       border-radius: 10px;
       box-shadow: 0px 4px 8px rgba(0,0,0,0.2);
@@ -62,6 +65,7 @@
 
   <!-- Input Form -->
   <div class="card p-3 mb-4">
+    <h5 class="mb-3">Add Item</h5>
     <div class="row g-2 align-items-center">
       <div class="col-md-4">
         <select id="produk" class="form-select" onchange="tampilHarga()">
@@ -74,15 +78,33 @@
       <div class="col-md-2">
         <input type="text" id="harga" class="form-control" placeholder="Price" readonly>
       </div>
+      <div class="col-md-2">
+        <input type="text" id="stok" class="form-control" placeholder="Stock" readonly>
+      </div>
       <div class="col-auto">
         <button class="btn btn-primary" onclick="tambahDetail()">Add</button>
       </div>
     </div>
   </div>
 
+  <!-- Product List -->
+  <div class="card p-3 mb-4">
+    <h5>Product List (Stock & Price)</h5>
+    <table class="table table-bordered bg-white">
+      <thead>
+        <tr>
+          <th>Product</th>
+          <th>Price</th>
+          <th>Stock</th>
+        </tr>
+      </thead>
+      <tbody id="produkListTable"></tbody>
+    </table>
+  </div>
+
   <!-- Cart Table -->
-  <div class="card p-3">
-    <h5> Shopping cart</h5>
+  <div class="card p-3 mb-4">
+    <h5>Shopping Cart</h5>
     <table class="table table-bordered bg-white">
       <thead>
         <tr>
@@ -101,6 +123,9 @@
         </tr>
       </tfoot>
     </table>
+    <div class="mt-2">
+      <button class="btn btn-danger btn-sm" onclick="clearCart()">Clear Cart</button>
+    </div>
   </div>
 
   <!-- Save -->
@@ -128,20 +153,35 @@
       return;
     }
     produkList = data;
+
     let select = document.getElementById("produk");
+    let table = document.getElementById("produkListTable");
+    table.innerHTML = "";
+
     data.forEach(p => {
       let opt = document.createElement("option");
       opt.value = p.id;
       opt.setAttribute("data-harga", p.harga);
+      opt.setAttribute("data-stok", p.stok);
       opt.textContent = p.nama;
       select.appendChild(opt);
+
+      let tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td>${p.nama}</td>
+        <td>Rp ${p.harga.toLocaleString()}</td>
+        <td>${p.stok}</td>
+      `;
+      table.appendChild(tr);
     });
   }
 
   function tampilHarga() {
     let produk = document.getElementById("produk");
     let harga = produk.options[produk.selectedIndex].getAttribute("data-harga") || "";
+    let stok = produk.options[produk.selectedIndex].getAttribute("data-stok") || "";
     document.getElementById("harga").value = harga;
+    document.getElementById("stok").value = stok;
   }
 
   function tambahDetail() {
@@ -150,9 +190,15 @@
     let nama = produk.options[produk.selectedIndex].text;
     let harga = parseFloat(document.getElementById("harga").value);
     let jumlah = parseInt(document.getElementById("jumlah").value);
+    let stok = parseInt(document.getElementById("stok").value);
 
     if (!id_produk || !harga || !jumlah) {
       Swal.fire("Oops!", "Select product and enter quantity", "warning");
+      return;
+    }
+
+    if (jumlah > stok) {
+      Swal.fire("Warning", "Order more than stock available!", "warning");
       return;
     }
 
@@ -167,6 +213,12 @@
   function hapusItem(index) {
     total -= keranjang[index].subtotal;
     keranjang.splice(index, 1);
+    renderKeranjang();
+  }
+
+  function clearCart() {
+    keranjang = [];
+    total = 0;
     renderKeranjang();
   }
 
@@ -220,12 +272,10 @@
     }
 
     Swal.fire("Success", "Transaction saved successfully", "success");
-    keranjang = [];
-    total = 0;
-    renderKeranjang();
+    clearCart();
   }
 
-  loadProduk();
+//   loadProduk();
 </script>
 
 </body>
