@@ -7,12 +7,24 @@
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
-body {
- 
-  background: linear-gradient(135deg, #fd9d0d, #ffcc00, #fd0d0d);
-  min-height: 100vh;
+    body {
+  /* background-color: #fd9d0d; */
+  background: linear-gradient(270deg, #fd9d0d, #fd0d0d, #fd9d0d, #fd0d0d);
+  background-size: 800% 800%;
+  animation: gradientBG 8s ease infinite;
 }
 
+@keyframes gradientBG {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
     h1 {
       color: #ffffff;
       font-weight: bold;
@@ -136,9 +148,8 @@ body {
 </div>
 
 <script>
-  // Supabase setup
   const SUPABASE_URL = "https://nwscjvyktzlgsemxtqqx.supabase.co";
-  const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im53c2NqdnlrdHpsZ3NlbXh0cXF4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTc0NjQ0NTEsImV4cCI6MjA3MzA0MDQ1MX0.6_yjcGYY_YFniZIlji8ZXo448wTjNwwZ-sHzl2S2W80"; 
+  const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im53c2NqdnlrdHpsZ3NlbXh0cXF4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTc0NjQ0NTEsImV4cCI6MjA3MzA0MDQ1MX0.6_yjcGYY_YFniZIlji8ZXo448wTjNwwZ-sHzl2S2W80"; // replace with your real key
   const { createClient } = supabase;
   const db = createClient(SUPABASE_URL, SUPABASE_KEY);
 
@@ -275,7 +286,7 @@ body {
     clearCart();
   }
 
-//   loadProduk();
+  loadProduk();
 </script>
 
 </body>
